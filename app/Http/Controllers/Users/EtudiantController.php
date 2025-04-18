@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Users;
 
-use App\Models\admin;
+use App\Http\Controllers\Controller;
+
+use App\Models\etudiant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,16 +12,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use PhpParser\Node\Stmt\For_;
 
-class AdminController extends Controller
+class EtudiantController extends Controller
 {
 
  public function index(){
     
-    $admins = admin::all();
+    $etudiants = etudiant::all();
     return response()->json([
 
-        "message"=>"voici la liste des administrateurs",
-          'admins'  =>    $admins,
+        "message"=>"voici la liste des etudiants",
+          'etudiants'  =>    $etudiants,
         
     ]) ;
 
@@ -33,9 +35,8 @@ class AdminController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|in:administrateur',
+        'role' => 'required|in:etudiant',
         'dateInscription' => 'nullable|date',
-        
     ]);
 
     return DB::transaction(function () use ($validated,$request){
@@ -50,13 +51,10 @@ $user=User::Create([
 ]);
 
 
-$user->admin()->create([
-    'niveau_acces'=> $request->niveau_acces,
-  
-]);
+$user->etudiant()->create([]);
 
 return response()->json([
-    'message' => 'administrateur créé avec succès.',
+    'message' => 'etudiant créé avec succès.',
     'user' => $user,
 ], 201); 
  });
@@ -64,8 +62,8 @@ return response()->json([
 }
 
 
-public function update(Request $request,admin $admin){
-    $user=$admin->user;
+public function update(Request $request,etudiant $etudiant){
+    $user=$etudiant->user;
 
 $validated=$request->validate([
         'name' => 'required|string|max:255',
@@ -74,10 +72,10 @@ $validated=$request->validate([
         'password' => 'required|string|min:8|confirmed',
         'role' => 'required|in:etudiant,formateur,administrateur',
         'dateInscription' => 'nullable|date',
-        'niveau_acces'=>'required|integer',
+    
 
 ]);
-return DB::transaction(function () use ($validated,$request,$admin,$user) {
+return DB::transaction(function () use ($validated,$request,$etudiant,$user) {
 
     $user->update([
         'name' => $validated['name'],
@@ -87,35 +85,30 @@ return DB::transaction(function () use ($validated,$request,$admin,$user) {
         // 'dateInscription' => $validated['dateInscription'],
     ]);
 
-    $admin->update([
-        'niveau_acces' => $validated['niveau_acces'],
-       
-    ]);
+    $etudiant->update([]);
     
 
     
     //au cas de changement du role
     if ($user->wasChanged('role')) {
-        $admin->delete();
+        $etudiant->delete();
         
          switch ($validated['role']) {
-            case 'etudiant':
-                $user->etudiant()->create();
+            case 'formateur':
+                $user->etudiant()->create(['specialite' => $request->specialite],
+             ['verification_statut' =>$request->verification_statut]);
                 break;
                 
-                case 'formateur':
-                    $user->formateur()->create([
-                        
-                        'specialite'=> $request->specialite,
-                        'verification_statut'=> $request->verification_statut,
-                    ]);
+            case 'administrateur':
+                $user->admin()->create(['niveau_acces'=> $request->niveau_acces]);
+                break;
         }}
 
     // return redirect()->route('users.index')
     //     ->with('success', 'user updated successfully.');
     return response()->json([
-        'message' => 'administrateur modifié avec succès.',
-        'admin' => $user,
+        'message' => 'etudiant modifié avec succès.',
+        'etudiant' => $user,
     ], 200);
     
     });
@@ -123,15 +116,15 @@ return DB::transaction(function () use ($validated,$request,$admin,$user) {
         }
 
         
-public function destroy(admin $admin){
+public function destroy(etudiant $etudiant){
 
- return DB::transaction(function () use ($admin) {
+ return DB::transaction(function () use ($etudiant) {
 
 
-    $user =$admin->user;
+    $user =$etudiant->user;
   
     $user->delete();
-    $admin->delete(); 
+    $etudiant->delete(); 
        
     
     
@@ -139,8 +132,8 @@ public function destroy(admin $admin){
 
 
     return response()->json([
-        'message' => 'administrateur supprimé avec succès.',
-        'admin' => $admin,
+        'message' => 'etudiant supprimé avec succès.',
+        'etudiant' => $etudiant,
     ], 200);
 
 });

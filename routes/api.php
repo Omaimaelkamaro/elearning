@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Users\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\EtudiantController;
-use App\Http\Controllers\FormateurController;
+use App\Http\Controllers\Users\EtudiantController;
+use App\Http\Controllers\Users\FormateurController;
+use App\Http\Controllers\cours\CoursController;
+
 
 
 /*
@@ -72,6 +74,17 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/admins', [AdminController::class ,'store']);
     Route::put('/admins/{admin}', [AdminController::class ,'update']);
     Route::delete('/admins/{admin}', [AdminController::class ,'destroy']);
+
+
+    //les routes pour cours 
+    Route::get('/cours', [CoursController::class, 'index']);
+    Route::post('/cours', [CoursController::class ,'store']);
+    Route::put('/cours/{cours}', [CoursController::class ,'update']);
+    Route::delete('/cours/archiver/{cours}', [CoursController::class ,'archiver']);
+    Route::get('/cours/trash', [CoursController::class, 'trash']);
+    Route::delete('/cours/{cours}', [CoursController::class ,'destroy']);
+    Route::post('/cours/restore/{cours}', [CoursController::class ,'restore']);
+
     
 });
         

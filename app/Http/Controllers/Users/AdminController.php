@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Users;
 
-use App\Models\Formateur;
+use App\Http\Controllers\Controller;
+
+use App\Models\admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,16 +12,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use PhpParser\Node\Stmt\For_;
 
-class FormateurController extends Controller
+class AdminController extends Controller
 {
 
  public function index(){
     
-    $formateurs = Formateur::all();
+    $admins = admin::all();
     return response()->json([
 
-        "message"=>"voici la liste des formateurs",
-          'formateurs'  =>    $formateurs,
+        "message"=>"voici la liste des administrateurs",
+          'admins'  =>    $admins,
         
     ]) ;
 
@@ -33,10 +35,9 @@ class FormateurController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|in:formateur',
+        'role' => 'required|in:administrateur',
         'dateInscription' => 'nullable|date',
-        'specialite' => 'required|string|max:255',
-        'verification_statut' => 'required|boolean',
+        
     ]);
 
     return DB::transaction(function () use ($validated,$request){
@@ -51,13 +52,13 @@ $user=User::Create([
 ]);
 
 
-$user->formateur()->create([
-    'specialite'=> $request->specialite,
-    'verification_statut'=> $request->verification_statut,
+$user->admin()->create([
+    'niveau_acces'=> $request->niveau_acces,
+  
 ]);
 
 return response()->json([
-    'message' => 'formateur créé avec succès.',
+    'message' => 'administrateur créé avec succès.',
     'user' => $user,
 ], 201); 
  });
@@ -65,8 +66,8 @@ return response()->json([
 }
 
 
-public function update(Request $request,Formateur $formateur){
-    $user=$formateur->user;
+public function update(Request $request,admin $admin){
+    $user=$admin->user;
 
 $validated=$request->validate([
         'name' => 'required|string|max:255',
@@ -75,11 +76,10 @@ $validated=$request->validate([
         'password' => 'required|string|min:8|confirmed',
         'role' => 'required|in:etudiant,formateur,administrateur',
         'dateInscription' => 'nullable|date',
-        'specialite' => 'required|string|max:255',
-        'verification_statut' => 'required|boolean',
+        'niveau_acces'=>'required|integer',
 
 ]);
-return DB::transaction(function () use ($validated,$request,$formateur,$user) {
+return DB::transaction(function () use ($validated,$request,$admin,$user) {
 
     $user->update([
         'name' => $validated['name'],
@@ -89,32 +89,35 @@ return DB::transaction(function () use ($validated,$request,$formateur,$user) {
         // 'dateInscription' => $validated['dateInscription'],
     ]);
 
-    $formateur->update([
-        'specialite' => $validated['specialite'],
-        'verification_statut' => $validated['verification_statut'],
+    $admin->update([
+        'niveau_acces' => $validated['niveau_acces'],
+       
     ]);
     
 
     
     //au cas de changement du role
     if ($user->wasChanged('role')) {
-        $formateur->delete();
+        $admin->delete();
         
          switch ($validated['role']) {
             case 'etudiant':
                 $user->etudiant()->create();
                 break;
                 
-            case 'administrateur':
-                $user->admin()->create(['niveau_acces'=> $request->niveau_acces]);
-                break;
+                case 'formateur':
+                    $user->formateur()->create([
+                        
+                        'specialite'=> $request->specialite,
+                        'verification_statut'=> $request->verification_statut,
+                    ]);
         }}
 
     // return redirect()->route('users.index')
     //     ->with('success', 'user updated successfully.');
     return response()->json([
-        'message' => 'formateur modifié avec succès.',
-        'formateur' => $user,
+        'message' => 'administrateur modifié avec succès.',
+        'admin' => $user,
     ], 200);
     
     });
@@ -122,15 +125,15 @@ return DB::transaction(function () use ($validated,$request,$formateur,$user) {
         }
 
         
-public function destroy(Formateur $formateur){
+public function destroy(admin $admin){
 
- return DB::transaction(function () use ($formateur) {
+ return DB::transaction(function () use ($admin) {
 
 
-    $user =$formateur->user;
+    $user =$admin->user;
   
     $user->delete();
-    $formateur->delete(); 
+    $admin->delete(); 
        
     
     
@@ -138,8 +141,8 @@ public function destroy(Formateur $formateur){
 
 
     return response()->json([
-        'message' => 'formateur supprimé avec succès.',
-        'formateur' => $formateur,
+        'message' => 'administrateur supprimé avec succès.',
+        'admin' => $admin,
     ], 200);
 
 });

@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Users;
 
-use App\Models\etudiant;
+use App\Http\Controllers\Controller;
+
+use App\Models\Formateur;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,16 +12,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use PhpParser\Node\Stmt\For_;
 
-class EtudiantController extends Controller
+class FormateurController extends Controller
 {
 
  public function index(){
     
-    $etudiants = etudiant::all();
+    $formateurs = Formateur::all();
     return response()->json([
 
-        "message"=>"voici la liste des etudiants",
-          'etudiants'  =>    $etudiants,
+        "message"=>"voici la liste des formateurs",
+          'formateurs'  =>    $formateurs,
         
     ]) ;
 
@@ -33,8 +35,10 @@ class EtudiantController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|in:etudiant',
+        'role' => 'required|in:formateur',
         'dateInscription' => 'nullable|date',
+        'specialite' => 'required|string|max:255',
+        'verification_statut' => 'required|boolean',
     ]);
 
     return DB::transaction(function () use ($validated,$request){
@@ -49,10 +53,13 @@ $user=User::Create([
 ]);
 
 
-$user->etudiant()->create([]);
+$user->formateur()->create([
+    'specialite'=> $request->specialite,
+    'verification_statut'=> $request->verification_statut,
+]);
 
 return response()->json([
-    'message' => 'etudiant créé avec succès.',
+    'message' => 'formateur créé avec succès.',
     'user' => $user,
 ], 201); 
  });
@@ -60,8 +67,8 @@ return response()->json([
 }
 
 
-public function update(Request $request,etudiant $etudiant){
-    $user=$etudiant->user;
+public function update(Request $request,Formateur $formateur){
+    $user=$formateur->user;
 
 $validated=$request->validate([
         'name' => 'required|string|max:255',
@@ -70,10 +77,11 @@ $validated=$request->validate([
         'password' => 'required|string|min:8|confirmed',
         'role' => 'required|in:etudiant,formateur,administrateur',
         'dateInscription' => 'nullable|date',
-    
+        'specialite' => 'required|string|max:255',
+        'verification_statut' => 'required|boolean',
 
 ]);
-return DB::transaction(function () use ($validated,$request,$etudiant,$user) {
+return DB::transaction(function () use ($validated,$request,$formateur,$user) {
 
     $user->update([
         'name' => $validated['name'],
@@ -83,18 +91,20 @@ return DB::transaction(function () use ($validated,$request,$etudiant,$user) {
         // 'dateInscription' => $validated['dateInscription'],
     ]);
 
-    $etudiant->update([]);
+    $formateur->update([
+        'specialite' => $validated['specialite'],
+        'verification_statut' => $validated['verification_statut'],
+    ]);
     
 
     
     //au cas de changement du role
     if ($user->wasChanged('role')) {
-        $etudiant->delete();
+        $formateur->delete();
         
          switch ($validated['role']) {
-            case 'formateur':
-                $user->etudiant()->create(['specialite' => $request->specialite],
-             ['verification_statut' =>$request->verification_statut]);
+            case 'etudiant':
+                $user->etudiant()->create();
                 break;
                 
             case 'administrateur':
@@ -105,8 +115,8 @@ return DB::transaction(function () use ($validated,$request,$etudiant,$user) {
     // return redirect()->route('users.index')
     //     ->with('success', 'user updated successfully.');
     return response()->json([
-        'message' => 'etudiant modifié avec succès.',
-        'etudiant' => $user,
+        'message' => 'formateur modifié avec succès.',
+        'formateur' => $user,
     ], 200);
     
     });
@@ -114,15 +124,15 @@ return DB::transaction(function () use ($validated,$request,$etudiant,$user) {
         }
 
         
-public function destroy(etudiant $etudiant){
+public function destroy(Formateur $formateur){
 
- return DB::transaction(function () use ($etudiant) {
+ return DB::transaction(function () use ($formateur) {
 
 
-    $user =$etudiant->user;
+    $user =$formateur->user;
   
     $user->delete();
-    $etudiant->delete(); 
+    $formateur->delete(); 
        
     
     
@@ -130,8 +140,8 @@ public function destroy(etudiant $etudiant){
 
 
     return response()->json([
-        'message' => 'etudiant supprimé avec succès.',
-        'etudiant' => $etudiant,
+        'message' => 'formateur supprimé avec succès.',
+        'formateur' => $formateur,
     ], 200);
 
 });
