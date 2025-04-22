@@ -9,6 +9,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Users\EtudiantController;
 use App\Http\Controllers\Users\FormateurController;
 use App\Http\Controllers\cours\CoursController;
+use App\Http\Controllers\cours\CategorieController;
+use App\Http\Controllers\cours\ModuleController;
+
 
 
 
@@ -85,6 +88,20 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::delete('/cours/{cours}', [CoursController::class ,'destroy']);
     Route::post('/cours/restore/{cours}', [CoursController::class ,'restore']);
 
+
+
+    //les routes pour une catégorie
+    Route::get('/categories', [CategorieController::class, 'index']);
+    Route::post('/categories', [CategorieController::class ,'store']);
+    Route::put('/categories/{categories}', [CategorieController::class ,'update']);
+    Route::delete('/categories/{categories}', [CategorieController::class ,'destroy']);
+
+
+    //les routes pour les modules
+    Route::get('/modules/{cours_id}', [ModuleController::class, 'index']);
+    Route::post('/modules/{cours_id}', [ModuleController::class ,'store']);
+    Route::put('/modules/{cours_id}/{module_id}', [ModuleController::class ,'update']);
+    Route::delete('/modules/{cours_id}/{module_id}', [ModuleController::class ,'destroy']);
     
 });
         

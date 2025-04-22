@@ -9,20 +9,29 @@ use Illuminate\Database\Eloquent\Model;
 class Module extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $table = 'formateur';
+    protected $table = 'module';
 
     protected $fillable =[
 
         'title',
-        'content',
+        'contenu',
         'duree',
         'ordre',
-        'type_content',
-        'course_id',
+        'date_de_creation',
+        'type_contenu',
+        'cours_id',
     ];
 
 public function cours(){
 
    return $this->belongsTo(Cours::class);
 }
+
+
+
+
+
+
+
+
 }
