@@ -59,6 +59,11 @@ public function admin()
     return $this->hasOne(Admin::class);
 }
 
+public function resultat()
+    {
+        return $this->hasMany(Resultat::class);
+    }
+
 public function profile()
 {
     return match($this->role) {

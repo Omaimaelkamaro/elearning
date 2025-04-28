@@ -17,12 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             
-            $table->text('contenu')->nullable();
-            $table->date('date_de_creation');
+            $table->string('contenu')->nullable();
             $table->integer('duree');
             $table->integer('ordre');
-            $table->string('Type contenu');
+            $table->string('type_contenu');
             $table->foreignId('cours_id')->constrained()->onDelete('cascade');
+            $table->unique(['cours_id', 'ordre']);
             $table->timestamps();
             $table->softDeletes();
         });

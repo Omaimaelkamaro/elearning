@@ -29,7 +29,7 @@ class Cours extends Model
     ];
     public function module()
     {
-        return $this->hasOne(module::class);
+        return $this->hasMany(module::class);
     }
 
     public function categorie()

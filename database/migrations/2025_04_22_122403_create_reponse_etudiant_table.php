@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('reponse_etudiant', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->boolean('est_correcte');
+            $table->foreignId('resultat_id')->nullable()->constrained('resultat');
+            $table->foreignId('question_id')->constrained('question')->onDelete('cascade');
+            $table->foreignId('option_reponse_id')->constrained('option_reponse')->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -29,7 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('reponse_etudiant');
     }
 };
-//categorie
