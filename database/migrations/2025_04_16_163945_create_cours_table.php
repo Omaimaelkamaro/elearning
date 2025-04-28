@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('gratuit');
             $table->date('date_de_creation');
             $table->integer('duree');
-            $table->numeric('prix');
+            $table->float('prix');
             $table->enum('niveau_de_difficulte',['avance','moyen','basique'])->default('basique');
             $table->foreignId('categorie_id')->constrained()->onDelete('cascade');
             $table->timestamps();
