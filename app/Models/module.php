@@ -24,9 +24,14 @@ class Module extends Model
 
 public function cours(){
 
-   return $this->belongsTo(Cours::class);
+   return $this->belongsTo(Cours::class,'cours_id');
 }
 
+
+public function quiz(){
+
+    return $this->hasOne(Quiz::class);
+ }
 
 
 

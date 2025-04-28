@@ -129,7 +129,7 @@ public function update(Request $request,$coursId,$moduleId){
             return $query->where('cours_id', $coursId);
         })->ignore($moduleId) 
     ],
-     'type_contenu'=>'required|String',
+      'type_contenu'=>'required|String',
      
     
  ]);
