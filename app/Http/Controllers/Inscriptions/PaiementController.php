@@ -176,7 +176,7 @@ $paiement->update($validate);
                 'message' => 'Paiement effectué avec succès.',
                 'paiement' => $paiement
             ]);
-        }
+        }//HAJARRRRRR
 
         return response()->json([
             'status' => 'error',
