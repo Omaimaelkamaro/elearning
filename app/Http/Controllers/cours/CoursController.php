@@ -53,7 +53,10 @@ $validated=$request->validate([
         'description'=>'required|string|max:255',
         'date_de_creation'=>'date',
         'duree'=>'required|integer|max:255',
-        'prix'=>'required|float|max:255',
+
+
+        'prix'=>'required|numeric|max:255',
+
         'niveau_de_difficulte'=>'required|in:avance,moyen,basique',
         'gratuit'=>'required|boolean',
         'categorie_id' => 'required',
