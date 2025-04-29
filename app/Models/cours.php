@@ -41,8 +41,10 @@ class Cours extends Model
     {
         return $this->belongsTo(Formateur::class);
     }
+public function inscription(){
 
-
+    return $this->hasMany(Inscription::class);
+}
 
 
 

@@ -105,7 +105,7 @@ public function update(Request $request,$id){
         'title'=>'required|string|max:255',
         'description'=>'required|string|max:255',
         'duree'=>'required|integer|max:255',
-        'prix'=>'required|numeric|max:255',
+        'prix'=>'required||max:255',
         'niveau_de_difficulte'=>'required|in:avance,moyen,basique',
         'gratuit'=>'required|boolean',
         'categorie_id' => 'required',

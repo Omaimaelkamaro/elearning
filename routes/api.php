@@ -9,6 +9,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Users\EtudiantController;
 use App\Http\Controllers\Users\FormateurController;
 use App\Http\Controllers\cours\CoursController;
+use App\Http\Controllers\Inscriptions\InscriptionController;
+use App\Http\Controllers\Inscriptions\PaiementController;
+
+
+
 use App\Http\Controllers\cours\CategorieController;
 use App\Http\Controllers\cours\ModuleController;
 use App\Http\Controllers\Quiz\OptionReponseController;
@@ -90,6 +95,21 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::delete('/cours/{cours}', [CoursController::class ,'destroy']);
     Route::post('/cours/restore/{cours}', [CoursController::class ,'restore']);
 
+    //les routes pour l'Inscription
+    Route::post('/inscriptions/{cours_id}/{user_id}', [InscriptionController::class, 'store']);//Inscription
+    Route::get('/inscriptions', [InscriptionController::class, 'index']);//Voir tt les inscriptions
+    Route::get('/inscriptions/{id}', [InscriptionController::class, 'show']);//Voir une inscription précise
+    Route::put('/inscriptions/{id}', [InscriptionController::class, 'updateAccess']);
+
+    // les routes pour les paiements
+    Route::post('/paiements/{inscription_id}', [PaiementController::class, 'store']);//Enregistrer un paiement
+    Route::get('/paiements', [PaiementController::class, 'index']);//Voir tous les paiements
+    Route::get('/paiements/{id}', [PaiementController::class, 'show']);//Voir un paiement spécifique
+    Route::put('/paiements/{id}', [PaiementController::class, 'update']);
+
+
+    Route::get('/paypal/success', [PaiementController::class, 'paypalSuccess'])->name('paypal.success');
+    Route::get('/paypal/cancel', [PaiementController::class, 'paypalCancel'])->name('paypal.cancel');
 
 
     //les routes pour une catégorie
@@ -133,10 +153,14 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/reponsesEtud/{question_id}/{option_reponse_id}/{resultat_id}', [ResultController::class ,'store']);
 
 
+
 });
+
         
     
 Route::middleware('auth:sanctum')->get( '/user',function (Request $request) {
     return $request->user();
     
 });
+
+

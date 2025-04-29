@@ -59,9 +59,15 @@ public function admin()
     return $this->hasOne(Admin::class);
 }
 
+
+public function inscription()
+    {
+        return $this->hasMany(Inscription::class);
+
 public function resultat()
     {
         return $this->hasMany(Resultat::class);
+
     }
 
 public function profile()
