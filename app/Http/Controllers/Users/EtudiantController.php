@@ -46,7 +46,7 @@ $user=User::Create([
     'email'=>$validated['email'],
     'password'=>Hash::make($validated['password']),
     'role' =>$validated['role'], 
-    // 'dateInscription'=>$validated['dateInscription'],
+    
     
 ]);
 

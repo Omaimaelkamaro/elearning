@@ -14,6 +14,13 @@ use App\Http\Controllers\Inscriptions\PaiementController;
 
 
 
+use App\Http\Controllers\cours\CategorieController;
+use App\Http\Controllers\cours\ModuleController;
+use App\Http\Controllers\Quiz\OptionReponseController;
+use App\Http\Controllers\Quiz\QuizController;
+use App\Http\Controllers\Quiz\QuestionController;
+use App\Http\Controllers\Quiz\ReponseEtudiantController;
+use App\Http\Controllers\Quiz\ResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,6 +110,50 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::get('/paypal/success', [PaiementController::class, 'paypalSuccess'])->name('paypal.success');
     Route::get('/paypal/cancel', [PaiementController::class, 'paypalCancel'])->name('paypal.cancel');
+
+
+    //les routes pour une catégorie
+    Route::get('/categories', [CategorieController::class, 'index']);
+    Route::post('/categories', [CategorieController::class ,'store']);
+    Route::put('/categories/{categories}', [CategorieController::class ,'update']);
+    Route::delete('/categories/{categories}', [CategorieController::class ,'destroy']);
+
+
+    //les routes pour les modules
+    Route::get('/modules/{cours_id}', [ModuleController::class, 'index']);
+    Route::post('/modules/{cours_id}', [ModuleController::class ,'store']);
+    Route::put('/modules/{cours_id}/{module_id}', [ModuleController::class ,'update']);
+    Route::delete('/modules/{cours_id}/{module_id}', [ModuleController::class ,'destroy']);
+
+    //les routes pour les quizs
+
+    Route::put('/quizs/{quiz_id}', [QuizController::class ,'update']);
+    Route::post('/quizs/{module_id}', [QuizController::class ,'store']);
+    Route::delete('/quizs/{quize_id}', [QuizController::class ,'destroy']);
+
+
+
+    //les routes pour les questions
+
+    Route::get('/questions/{quiz_id}', [QuestionController::class ,'index']);
+    Route::put('/questions/{question_id}', [QuestionController::class ,'update']);
+    Route::post('/questions/{quiz_id}', [QuestionController::class ,'store']);
+    Route::delete('/questions/{question_id}', [QuestionController::class ,'destroy']);
+
+    //les routes pour les options des reponses
+    Route::put('/reponses/{reponse_id}', [OptionReponseController::class ,'update']);
+    Route::post('/reponses/{question_id}', [OptionReponseController::class ,'store']);
+    Route::delete('/reponses/{question_id}', [OptionReponseController::class ,'destroy']);
+
+    //les routes pour les reponses de l'etudiant
+    Route::post('/reponsesEtud/{question_id}/{option_reponse_id}', [ReponseEtudiantController::class ,'store']);
+
+    //les routes pour les résultats
+    Route::get('/resultats', [ResultController::class ,'index']);
+    Route::post('/reponsesEtud/{question_id}/{option_reponse_id}/{resultat_id}', [ResultController::class ,'store']);
+
+
+
 });
 
         
