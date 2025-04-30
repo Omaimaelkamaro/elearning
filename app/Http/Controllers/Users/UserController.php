@@ -77,21 +77,37 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated=$request->validate([
+      $userAuth=auth()->user();
+
+        $param = [
         'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|',Rule::unique('users')->ignore($request->id),
+        'email' => ['required','string','email','max:255',Rule::unique('users')->ignore($request->id)],
+        'password'=>'required|string|max:255',
+    ];
+   
         
-        'role' => 'required|in:etudiant,formateur,administrateur',
         
-        ]);
-        
-        
-        return DB::transaction(function () use ($validated,$request,$id) {
+        if($userAuth->role=='administrateur'){
+        $param['role']='required|in:etudiant,formateur,administrateur';
+
+    }
+
+
+    $validated=$request->validate($param);
+
+        return DB::transaction(function () use ($validated,$request,$userAuth,$id) {
             
-            $user = User::find($id);
-            $user->update($validated);
-        // Gestion du changement de rôle
-        if ($user->wasChanged('role')) {
+            $user = User::findOrFail($id);
+            $oldRole=$user->role;
+            $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => $userAuth->role==='administrateur'? $validated['role'] : $oldRole,
+        ]);
+            
+     
+        if ($userAuth->role=='administrateur'&& $user->wasChanged('role')) {
             // Supprimer les anciennes relations
             $user->etudiant()->delete();
             $user->formateur()->delete();
@@ -123,7 +139,7 @@ class UserController extends Controller
             'message' => 'Utilisateur modifié avec succès.',
             'user' => $user,
         ], 200);
-        
+            
         });
     }
     

@@ -31,10 +31,10 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function showLoginForm()
-    {
-        return view('auth.login');
-    }
+    //  public function showLoginForm()
+    // {
+    //     return view('auth.login');
+    // }
 
      public function login(Request $request)
      {

@@ -27,8 +27,10 @@ $user =User::create([
     'name'=>$request->name,
     'email'=>$request->email,
     'password'=>Hash::make($request->password),
+    
 
 ]);
+$user->etudiant()->create();
 
 $token = $user->createToken('auth_token')->plainTextToken;
 

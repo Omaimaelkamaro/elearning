@@ -28,6 +28,15 @@ public function cours(){
 }
 
 
+
+public function apprentissages()
+{
+    return $this->belongsToMany(Apprentissage::class, 'apprentissage_module')
+                ->withPivot('est_complete', 'date_debut', 'date_fin')
+                ->withTimestamps();
+}
+
+
 public function quiz(){
 
     return $this->hasOne(Quiz::class);

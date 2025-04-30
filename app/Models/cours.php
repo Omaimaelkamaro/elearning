@@ -46,7 +46,18 @@ public function inscription(){
     return $this->hasMany(Inscription::class);
 }
 
+//pivot apprentissage
+public function apprentissage()
+{
+    return $this->hasMany(Apprentissage::class);
+}
 
+public function user()
+{
+    return $this->belongsToMany(User::class, 'apprentissage')
+                ->withPivot('progression', 'etat', 'date_debut', 'dateFin', 'derniere_activite')
+                ->withTimestamps();
+}
 
 
 }

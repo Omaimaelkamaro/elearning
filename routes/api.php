@@ -21,6 +21,9 @@ use App\Http\Controllers\Quiz\QuizController;
 use App\Http\Controllers\Quiz\QuestionController;
 use App\Http\Controllers\Quiz\ReponseEtudiantController;
 use App\Http\Controllers\Quiz\ResultController;
+use App\Http\Controllers\Inscriptions\ApprentissageController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -153,6 +156,11 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/reponsesEtud/{question_id}/{option_reponse_id}/{resultat_id}', [ResultController::class ,'store']);
 
 
+    //les routes pour le système d'apprentissage
+    Route::post('/apprentissages/{userId}/{coursId}/{moduleId}', [ApprentissageController::class, 'completerModule']);
+    Route::get('/apprentissages/{userId}', [ApprentissageController::class, 'coursPourEtudiant']);
+    Route::get('/apprentissages', [ApprentissageController::class, 'index']);
+    
 
 });
 
