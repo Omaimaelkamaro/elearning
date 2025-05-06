@@ -21,6 +21,7 @@ use App\Http\Controllers\Quiz\QuizController;
 use App\Http\Controllers\Quiz\QuestionController;
 use App\Http\Controllers\Quiz\ReponseEtudiantController;
 use App\Http\Controllers\Quiz\ResultController;
+use App\Http\Controllers\Requests\FormateurRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +152,18 @@ Route::middleware('auth:sanctum')->group( function () {
     //les routes pour les résultats
     Route::get('/resultats', [ResultController::class ,'index']);
     Route::post('/reponsesEtud/{question_id}/{option_reponse_id}/{resultat_id}', [ResultController::class ,'store']);
+
+
+    //les routes pour les demandes (devenir formateur)
+
+ 
+ Route::post('/formateur-request', [FormateurRequestController::class, 'store']);// Créer une nouvelle demande
+
+ Route::get('/formateur-requests', [FormateurRequestController::class, 'index']);// Voir toutes les demandes
+
+ Route::get('/formateur-request/{id}', [FormateurRequestController::class, 'show']); // Voir une seule demande 
+
+ Route::put('/formateur-request/{id}/statut', [FormateurRequestController::class, 'updateStatut']);// Valider ou rejeter une demande
 
 
 

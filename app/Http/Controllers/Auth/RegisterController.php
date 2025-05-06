@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Validator;
 class RegisterController extends Controller
 
 
-
 {
 function register(Request $request){
 $request->validate([
@@ -29,6 +28,7 @@ $user =User::create([
     'password'=>Hash::make($request->password),
 
 ]);
+$user->etudiant()->create();
 
 $token = $user->createToken('auth_token')->plainTextToken;
 

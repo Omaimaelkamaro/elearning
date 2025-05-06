@@ -63,7 +63,7 @@ public function admin()
 public function inscription()
     {
         return $this->hasMany(Inscription::class);
-
+    }
 public function resultat()
     {
         return $this->hasMany(Resultat::class);
