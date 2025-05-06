@@ -69,6 +69,20 @@ public function resultat()
         return $this->hasMany(Resultat::class);
 
     }
+//pivot apprentissage
+    public function apprentissage()
+    {
+        return $this->hasMany(Apprentissage::class);
+    }
+    
+    public function cours()
+    {
+        return $this->belongsToMany(Cours::class, 'apprentissage')
+                    ->withPivot('progression', 'etat', 'date_debut', 'dateFin', 'derniere_activite')
+                    ->withTimestamps();
+    }
+    
+
 
 public function profile()
 {

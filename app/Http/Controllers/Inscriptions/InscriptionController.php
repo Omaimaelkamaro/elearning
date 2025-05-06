@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cours;
 use App\Models\Inscription;
+use App\Models\Apprentissage;
 
 class InscriptionController extends Controller
 {
@@ -13,9 +14,9 @@ class InscriptionController extends Controller
    public function store(Request $request,$userId,$coursId){
     $user=auth()->user();
 
-    $request->validate([
-        'cours_id' ,
-    ]);
+    // $request->validate([
+    //     'cours_id' ,
+    // ]);
 
     $cours = Cours::findOrFail($request->cours_id);
     $inscription = new Inscription();
@@ -29,6 +30,14 @@ class InscriptionController extends Controller
         $inscription->statut_paiement = 'en_attente';
         $inscription->acces = false;
     }
+    
+    $apprentissage = Apprentissage::create([
+        'user_id' => $request->user_id,
+        'cours_id' => $request->cours_id,
+        'etat' => 'pas_commence', 
+        'progression' => 0, 
+        'date_debut' => now(),
+    ]);
 
     $inscription->save();
     return response()->json([
