@@ -21,13 +21,11 @@ use App\Http\Controllers\Quiz\QuizController;
 use App\Http\Controllers\Quiz\QuestionController;
 use App\Http\Controllers\Quiz\ReponseEtudiantController;
 use App\Http\Controllers\Quiz\ResultController;
-<<<<<<< HEAD
 use App\Http\Controllers\Requests\FormateurRequestController;
-=======
+
 use App\Http\Controllers\Inscriptions\ApprentissageController;
+use App\Http\Controllers\Inscriptions\CertificationController;
 
-
->>>>>>> 89e4e5f88aef14db5c0518b009063c17caa64999
 
 /*
 |--------------------------------------------------------------------------
@@ -160,7 +158,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/reponsesEtud/{question_id}/{option_reponse_id}/{resultat_id}', [ResultController::class ,'store']);
 
 
-<<<<<<< HEAD
+
     //les routes pour les demandes (devenir formateur)
 
  
@@ -173,13 +171,18 @@ Route::middleware('auth:sanctum')->group( function () {
  Route::put('/formateur-request/{id}/statut', [FormateurRequestController::class, 'updateStatut']);// Valider ou rejeter une demande
 
 
-=======
+
     //les routes pour le système d'apprentissage
     Route::post('/apprentissages/{userId}/{coursId}/{moduleId}', [ApprentissageController::class, 'completerModule']);
     Route::get('/apprentissages/{userId}', [ApprentissageController::class, 'coursPourEtudiant']);
     Route::get('/apprentissages', [ApprentissageController::class, 'index']);
+
+
+    //Route pour certificat
+    Route::get('/certificat/{userId}/{coursId}', [CertificationController::class, 'getCertificatData']);
+
     
->>>>>>> 89e4e5f88aef14db5c0518b009063c17caa64999
+
 
 });
 
