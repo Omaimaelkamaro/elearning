@@ -25,6 +25,8 @@ use App\Http\Controllers\Requests\FormateurRequestController;
 
 use App\Http\Controllers\Inscriptions\ApprentissageController;
 use App\Http\Controllers\Inscriptions\CertificationController;
+use App\Http\Controllers\StatistiqueController;
+
 
 
 /*
@@ -35,7 +37,7 @@ use App\Http\Controllers\Inscriptions\CertificationController;
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
-*/ 
+*/
 
 Route::group([],function(){
     Route::post('/login', [LoginController::class, 'login']);
@@ -51,15 +53,15 @@ Route::group([],function(){
 Route::middleware('auth:sanctum')->group( function () {
 
     //Les routes qui concerne user
-    
-    
+
+
     Route::get('/users', [UserController::class, 'index']);
     // ajouter les utilisateurs à la base de donné
     Route::post('/users', [UserController::class ,'store']);
     // retourne un utilisateur
     Route::get('/users/{user}', [UserController::class ,'show']);
-    // retourner la formulaire de modification d'un utilisateur 
-    
+    // retourner la formulaire de modification d'un utilisateur
+
     // modifier un utilisateur user
     Route::put('/users/{user}', [UserController::class ,'update']);
     // supprimer un utilisateur
@@ -73,7 +75,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/formateurs', [FormateurController::class ,'store']);
     Route::put('/formateurs/{formateur}', [FormateurController::class ,'update']);
     Route::delete('/formateurs/{formateur}', [FormateurController::class ,'destroy']);
-    
+
 
 
     //les routes pour etudiant
@@ -91,7 +93,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::delete('/admins/{admin}', [AdminController::class ,'destroy']);
 
 
-    //les routes pour cours 
+    //les routes pour cours
     Route::get('/cours', [CoursController::class, 'index']);
     Route::post('/cours', [CoursController::class ,'store']);
     Route::put('/cours/{cours}', [CoursController::class ,'update']);
@@ -161,12 +163,12 @@ Route::middleware('auth:sanctum')->group( function () {
 
     //les routes pour les demandes (devenir formateur)
 
- 
+
  Route::post('/formateur-request', [FormateurRequestController::class, 'store']);// Créer une nouvelle demande
 
  Route::get('/formateur-requests', [FormateurRequestController::class, 'index']);// Voir toutes les demandes
 
- Route::get('/formateur-request/{id}', [FormateurRequestController::class, 'show']); // Voir une seule demande 
+ Route::get('/formateur-request/{id}', [FormateurRequestController::class, 'show']); // Voir une seule demande
 
  Route::put('/formateur-request/{id}/statut', [FormateurRequestController::class, 'updateStatut']);// Valider ou rejeter une demande
 
@@ -181,16 +183,20 @@ Route::middleware('auth:sanctum')->group( function () {
     //Route pour certificat
     Route::get('/certificat/{userId}/{coursId}', [CertificationController::class, 'getCertificatData']);
 
-    
+    //statistique about us
+    Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
+
+
+
 
 
 });
 
-        
-    
+
+
 Route::middleware('auth:sanctum')->get( '/user',function (Request $request) {
     return $request->user();
-    
+
 });
 
 
