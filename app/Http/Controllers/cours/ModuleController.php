@@ -74,17 +74,16 @@ public function store(Request $request,$coursId){
   $validated=$request->validate([
 
     'title'=>'required|string',
-    'contenu'=>'required|string',
-    'duree'=>'required|Integer',
-    'type_contenu'=>'required|string',
-    'ordre'=>'required',
-    'Integer',
-    'min:1',
+    'contenu'=>'nullable|string',
+    'duree'=>'nullable|Integer',
+    'type_contenu' => 'nullable|in:text,video,pdf',
+    'ordre'=>'nullable|Integer|min:1',
     Rule::unique('module')->where(function ($query) use ($coursId) {
         return $query->where('cours_id', $coursId);
+       
     })
     
-   
+
 ]);
 
 
@@ -97,10 +96,10 @@ $validated['ordre'] = ++$dernierOrdre ;
 
 
 $module=Module::create(['title' => $validated['title'],
-        'contenu' => $validated['contenu'],
-        'duree' => $validated['duree'],
-        'ordre' => $validated['ordre'],
-        'type_contenu' => $validated['type_contenu'],
+        'contenu' => $validated['contenu']?? null,
+        'duree' => $validated['duree']?? null,
+        'ordre' => $validated['ordre']?? null,
+        'type_contenu' => $validated['type_contenu']?? null,
         'cours_id' => $coursId,
     ]);
 
@@ -112,41 +111,64 @@ return response()->json([
 }
 
 
-public function update(Request $request,$coursId,$moduleId){
-   
-    
+public function update(Request $request, $coursId, $moduleId)
+{
     $this->checkFormateurPermissions($coursId);
-   $validated=$request->validate([
- 
-     'title'=>'required|string',
-     'contenu'=>'required|string',
-     'duree'=>'required|Integer',
-     'ordre' => [
-        'required',
-        'integer',
-        'min:1',
-        Rule::unique('module')->where(function ($query) use ($coursId) {
-            return $query->where('cours_id', $coursId);
-        })->ignore($moduleId) 
-    ],
-      'type_contenu'=>'required|String',
-     
-    
- ]);
 
- 
-$module=Module::find($moduleId)
-  ->where('cours_id',$coursId)
-  ->firstOrFail();
+    $rules = [
+        'title' => 'required|string',
+        'duree' => 'required|integer',
+        'ordre' => [
+            'required',
+            'integer',
+            'min:1',
+            Rule::unique('module')->where(function ($query) use ($coursId) {
+                return $query->where('cours_id', $coursId);
+            })->ignore($moduleId)
+        ],
+        'type_contenu' => 'nullable|in:text,video,pdf',
+    ];
 
- $module->update( $validated);
+    if ($request->type_contenu === 'text') {
+        $rules['contenu'] = 'required|string';
+    } elseif ($request->type_contenu === 'video') {
+        $rules['contenu'] = 'required|file|mimes:mp4,mov,avi|max:51200'; // 50MB max
+    } elseif ($request->type_contenu === 'pdf') {
+        $rules['contenu'] = 'required|file|mimes:pdf|max:10240'; // 10MB max
+    }
 
- return response()->json([
-    'message'=>' module modifié avec succés  ',
-     'Module'=>$module,
-]);
-        
+    $validated = $request->validate($rules);
+
+    // Gérer les fichiers uploadés
+    if ($request->hasFile('contenu')) {
+        $file = $request->file('contenu');
+        $filename = time() . '_' . $file->getClientOriginalName();
+
+        if ($request->type_contenu === 'pdf') {
+            $file->storeAs('modules', $filename, 'public');
+            $validated['contenu'] = 'storage/modules/' . $filename;
+        } elseif ($request->type_contenu === 'video') {
+            $file->storeAs('videos', $filename, 'public');
+            $validated['contenu'] = 'storage/videos/' . $filename;
+        }
+    }
+
+    $validated['type_contenu'] = $request->type_contenu;
+
+    $module = Module::where('cours_id', $coursId)
+                    ->findOrFail($moduleId);
+
+    $module->update($validated);
+
+    return response()->json([
+        'message' => 'Module modifié avec succès',
+        'module' => $module,
+    ]);
+   
+
 }
+
+
 
 public function destroy($coursId, $moduleId)
 {

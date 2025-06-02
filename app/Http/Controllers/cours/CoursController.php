@@ -12,6 +12,7 @@ class CoursController extends Controller
 {
     try {
         $user = auth()->user();
+<<<<<<< HEAD
 
         if (!$user) {
      $cours = Cours::all()->map(function ($c) {
@@ -38,6 +39,9 @@ class CoursController extends Controller
 }
 
          if ($user->role === 'etudiant') {
+=======
+        if ($user->role === 'etudiant') {
+>>>>>>> 9209062 (commit back)
             $cours = Cours::all()->map(function ($c) {
                 return [
                     'id' => $c->id,
@@ -53,13 +57,22 @@ class CoursController extends Controller
                     'photo_path' => $c->photo_path,
                     'archived' => false, // l’étudiant ne voit que les cours actifs
                 ];
+<<<<<<< HEAD
          });
+=======
+        });
+>>>>>>> 9209062 (commit back)
 
             return response()->json([
                 "message" => "Liste des cours disponibles pour l'étudiant",
                 "cours" => $cours,
             ]);
         }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 9209062 (commit back)
         if (!in_array($user->role, ['formateur', 'administrateur'])) {
             return response()->json([
                 'message' => 'Accès non autorisé.'
@@ -81,7 +94,11 @@ class CoursController extends Controller
             'categorie_id' => $c->categorie_id,
             'formateur_id' => $c->formateur_id,
             'photo_path' => $c->photo_path,
+<<<<<<< HEAD
            'archived' => $c->trashed(),
+=======
+           'archived' => $c->trashed(), 
+>>>>>>> 9209062 (commit back)
         ];
     });
         } else if ($user->role === 'formateur') {
@@ -92,7 +109,11 @@ class CoursController extends Controller
             }
 
             $formateurId = $user->formateur->id;
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 9209062 (commit back)
              $cours = Cours::where('formateur_id', $formateurId)->withTrashed()->get()->map(function ($c) {
         return [
             'id' => $c->id,
@@ -106,7 +127,11 @@ class CoursController extends Controller
             'categorie_id' => $c->categorie_id,
             'formateur_id' => $c->formateur_id,
             'photo_path' => $c->photo_path,
+<<<<<<< HEAD
            'archived' => $c->trashed(),
+=======
+           'archived' => $c->trashed(), 
+>>>>>>> 9209062 (commit back)
         ];
     });
         }
@@ -122,20 +147,44 @@ class CoursController extends Controller
         ], 500);
     }
 }
+<<<<<<< HEAD
 
 
 public function store(Request $request){
 
     //Récupérer l'utilisateur connecté
+=======
+
+
+public function store(Request $request)
+{
+    // Récupérer l'utilisateur connecté
+>>>>>>> 9209062 (commit back)
     $user = auth()->user();
-if(!in_array($user->role,['formateur','administrateur'])){
 
-    return response()->json([
-        'message' => 'Accès non autorisé. Seuls les administrateurs et formateurs peuvent accéder à un cours.'
-    ], 403);
+    if (!in_array($user->role, ['formateur', 'administrateur'])) {
+        return response()->json([
+            'message' => 'Accès non autorisé. Seuls les administrateurs et formateurs peuvent accéder à un cours.'
+        ], 403);
+    }
 
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string|max:255',
+        'date_de_creation' => 'nullable|date',
+        'duree' => 'nullable|integer|max:255',
+        'prix' => 'nullable|numeric|max:255',
+        'niveau_de_difficulte' => 'nullable|in:avance,moyen,basique',
+        'gratuit' => 'nullable|boolean',
+        'categorie_id' => 'required|exists:categories,id',
+        'photo_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+
+    if (!isset($validated['date_de_creation']) ){
+    $validated['date_de_creation'] = now()->toDateString(); // Format Y-m-d
 }
 
+<<<<<<< HEAD
 $validated=$request->validate([
         'title'=>'required|string|max:255',
         'description'=>'required|string|max:255',
@@ -150,9 +199,17 @@ $validated=$request->validate([
 ]);
 if ($user->role === 'formateur') {
     $validated['formateur_id'] = $user->formateur->id;
+=======
+if ($request->hasFile('photo_path')) {
+    $path = $request->file('photo_path')->store('cours', 'public');
+    $validated['photo_path'] = $path;
+>>>>>>> 9209062 (commit back)
 }
+    // Associer l'id du formateur selon le rôle
+    if ($user->role === 'formateur') {
+        $validated['formateur_id'] = $user->formateur->id;
+    }
 
-if($user->role=='administrateur'){
     if ($user->role === 'administrateur') {
         $formateurData = $request->validate([
             'formateur_id' => 'required|exists:formateur,id'
@@ -165,8 +222,10 @@ if($user->role=='administrateur'){
                 'message' => 'Le formateur sélectionné n’existe pas.'
             ], 404);
         }
+
         $validated['formateur_id'] = $formateurData['formateur_id'];
     }
+<<<<<<< HEAD
 
 }
 $cours=Cours::create($validated);
@@ -174,9 +233,12 @@ $cours=Cours::create($validated);
  return response()->json([
     "message"=>"cours crée avec succées",
     "cours"=>$cours,
+=======
+>>>>>>> 9209062 (commit back)
 
- ]);
+    $cours = Cours::create($validated);
 
+<<<<<<< HEAD
 }
 
 public function update(Request $request, $id) {
@@ -197,6 +259,11 @@ public function update(Request $request, $id) {
         'niveau_de_difficulte' => 'nullable|in:avance,moyen,basique',
         'gratuit' => 'nullable|boolean',
 
+=======
+    return response()->json([
+        "message" => "Cours créé avec succès",
+        "cours" => $cours,
+>>>>>>> 9209062 (commit back)
     ]);
 
     $cours = Cours::find($id);
@@ -215,6 +282,79 @@ public function update(Request $request, $id) {
     return response()->json([
         'message' => 'Cours modifié avec succès.',
         'cours' => $cours,
+    ], 200);
+}
+ public function updateImage(Request $request, $id){
+
+<<<<<<< HEAD
+ $user = auth()->user();
+    if (!in_array($user->role, ['formateur', 'administrateur'])) {
+        return response()->json([
+            'message' => 'Accès non autorisé. Seuls les administrateurs et formateurs peuvent accéder à un cours.'
+        ], 403);
+    }
+ $request->validate([
+        'photo_path' => 'required|image|mimes:jpeg,png,jpg|max:4096',
+    ]);
+
+    $cours = Cours::find($id);
+    if (!$cours) {
+        return response()->json([
+            'message' => 'Cours non trouvé.',
+        ], 404);
+    }
+
+    if ($request->hasFile('photo_path')) {
+        $photo_path = $request->file('photo_path')->store('cours_photos', 'public');
+        $cours->photo_path = $photo_path;
+        $cours->save();
+    }
+
+
+
+
+    return response()->json([
+        'message' => 'Photo mise à jour avec succès.',
+        'photo_path' => $cours->photo_path,
+=======
+
+public function update(Request $request, $id) {
+    $user = auth()->user();
+    if (!in_array($user->role, ['formateur', 'administrateur'])) {
+        return response()->json([
+            'message' => 'Accès non autorisé. Seuls les administrateurs et formateurs peuvent accéder à un cours.'
+        ], 403);
+    }
+
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string|max:255',
+        'langue' => 'nullable|string|max:255',
+        'date_de_creation' => 'nullable|date',
+        'duree' => 'nullable|integer|max:255',
+        'prix' => 'nullable|numeric|max:255',
+        'niveau_de_difficulte' => 'nullable|in:avance,moyen,basique',
+        'gratuit' => 'nullable|boolean',
+        
+    ]);
+
+    $cours = Cours::find($id);
+    if (!$cours) {
+        return response()->json([
+            'message' => 'Ce cours n\'existe pas',
+        ], 404);
+    }
+
+    $cours->update($validated);
+
+    
+
+    
+
+    return response()->json([
+        'message' => 'Cours modifié avec succès.',
+        'cours' => $cours,
+>>>>>>> 9209062 (commit back)
     ], 200);
 }
  public function updateImage(Request $request, $id){
@@ -250,6 +390,8 @@ public function update(Request $request, $id) {
         'photo_path' => $cours->photo_path,
     ], 200);
 }
+
+ 
 
 public function archiver($id)
 {

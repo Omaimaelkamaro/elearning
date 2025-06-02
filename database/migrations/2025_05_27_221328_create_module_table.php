@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             
-            $table->string('contenu')->nullable();
-            $table->integer('duree');
-            $table->integer('ordre');
-            $table->string('type_contenu');
+            $table->text('contenu')->nullable();
+            $table->integer('duree')->nullable();
+            $table->integer('ordre')->nullable();
+            $table->enum('type_contenu', ['text', 'video', 'pdf'])->nullable();
             $table->foreignId('cours_id')->constrained()->onDelete('cascade');
             $table->unique(['cours_id', 'ordre']);
             $table->timestamps();

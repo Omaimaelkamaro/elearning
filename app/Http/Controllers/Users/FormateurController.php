@@ -17,7 +17,8 @@ class FormateurController extends Controller
 
  public function index(){
     
-    $formateurs = Formateur::all();
+    $formateurs = Formateur::with('user')->get();
+
     return response()->json([
 
         "message"=>"voici la liste des formateurs",

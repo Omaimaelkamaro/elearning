@@ -11,6 +11,7 @@ use App\Http\Controllers\Users\FormateurController;
 use App\Http\Controllers\cours\CoursController;
 use App\Http\Controllers\Inscriptions\InscriptionController;
 use App\Http\Controllers\Inscriptions\PaiementController;
+use App\Http\Controllers\Mail\MailController;
 
 
 
@@ -29,7 +30,7 @@ use App\Http\Controllers\Inscriptions\CertificationController;
 use App\Http\Controllers\StatistiqueController;
 
 
-use App\Http\Controllers\Mail\MailController;
+
 
 
 
@@ -47,14 +48,8 @@ Route::group([],function(){
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/register', [RegisterController::class, 'register']);
     Route::post('/logout', [LoginController::class, 'logout']);
-
-    //statistique about us
-    Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
- Route::get('/categories', [CategorieController::class, 'index']);
-   Route::get('/cours', [CoursController::class, 'index']);
-
+     Route::get('/cours', [CoursController::class, 'index']);
     Route::get('/categories', [CategorieController::class, 'index']);
-
 });
 // Route::get('/login', [LoginController::class, 'showLoginform']);
 
@@ -110,9 +105,10 @@ Route::middleware('auth:sanctum')->group( function () {
 
 
     //les routes pour cours
-
+   
     Route::post('/cours', [CoursController::class ,'store']);
     Route::put('/cours/{cours}', [CoursController::class ,'update']);
+    Route::put('/coursImage/{cours}', [CoursController::class ,'updateImage']);
     Route::delete('/cours/archiver/{cours}', [CoursController::class ,'archiver']);
     Route::get('/cours/trash', [CoursController::class, 'trash']);
     Route::delete('/cours/{cours}', [CoursController::class ,'destroy']);
@@ -152,7 +148,7 @@ Route::middleware('auth:sanctum')->group( function () {
     //les routes pour les modules
     Route::get('/modules/{cours_id}', [ModuleController::class, 'index']);
     Route::post('/modules/{cours_id}', [ModuleController::class ,'store']);
-    Route::put('/modules/{cours_id}/{module_id}', [ModuleController::class ,'update']);
+    Route::match(['put', 'post'],'/modules/{cours_id}/{module_id}', [ModuleController::class ,'update']);
     Route::delete('/modules/{cours_id}/{module_id}', [ModuleController::class ,'destroy']);
 
     //les routes pour les quizs
@@ -207,14 +203,8 @@ Route::middleware('auth:sanctum')->group( function () {
     //Route pour certificat
     Route::get('/certificat/{userId}/{coursId}', [CertificationController::class, 'getCertificatData']);
 
-
-
-
-//les routes pour contact us
-    Route::get('/mails', [UserController::class, 'Email']);
-    Route::post('/contact', [MailController::class ,'store']);
-
-
+    //statistique about us
+    Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
 
 
 });
