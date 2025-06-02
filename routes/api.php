@@ -24,8 +24,12 @@ use App\Http\Controllers\Quiz\ResultController;
 use App\Http\Controllers\Requests\FormateurRequestController;
 
 use App\Http\Controllers\Inscriptions\ApprentissageController;
+
 use App\Http\Controllers\Inscriptions\CertificationController;
 use App\Http\Controllers\StatistiqueController;
+
+
+use App\Http\Controllers\Mail\MailController;
 
 
 
@@ -43,10 +47,13 @@ Route::group([],function(){
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/register', [RegisterController::class, 'register']);
     Route::post('/logout', [LoginController::class, 'logout']);
+
     //statistique about us
     Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
  Route::get('/categories', [CategorieController::class, 'index']);
    Route::get('/cours', [CoursController::class, 'index']);
+
+    Route::get('/categories', [CategorieController::class, 'index']);
 
 });
 // Route::get('/login', [LoginController::class, 'showLoginform']);
@@ -61,6 +68,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
 
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/profile', [UserController::class, 'profile']);
+    Route::put('/users/edit-profile', [UserController::class, 'updateProfile']);
     // ajouter les utilisateurs à la base de donné
     Route::post('/users', [UserController::class ,'store']);
     // retourne un utilisateur
@@ -71,6 +80,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::put('/users/{user}', [UserController::class ,'update']);
     // supprimer un utilisateur
     Route::delete('/users/{user}', [UserController::class ,'destroy']);
+    
+    
 
 
 
@@ -128,6 +139,10 @@ Route::middleware('auth:sanctum')->group( function () {
 
 
     //les routes pour une catégorie
+
+
+
+    
 
     Route::post('/categories', [CategorieController::class ,'store']);
     Route::put('/categories/{categories}', [CategorieController::class ,'update']);
@@ -188,9 +203,16 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('/apprentissages', [ApprentissageController::class, 'index']);
 
 
+
     //Route pour certificat
     Route::get('/certificat/{userId}/{coursId}', [CertificationController::class, 'getCertificatData']);
 
+
+
+
+//les routes pour contact us
+    Route::get('/mails', [UserController::class, 'Email']);
+    Route::post('/contact', [MailController::class ,'store']);
 
 
 

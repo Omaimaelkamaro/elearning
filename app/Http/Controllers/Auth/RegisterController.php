@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Welcome;
 
 class RegisterController extends Controller
 
@@ -32,6 +34,11 @@ $user =User::create([
 $user->etudiant()->create();
 
 $token = $user->createToken('auth_token')->plainTextToken;
+
+
+      Mail::to($user->email)->send(new Welcome());
+      
+
 
 return response()->json([
     'user' => $user,

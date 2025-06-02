@@ -25,7 +25,9 @@ public function store(Request $request){
     $validated =$request->validate([
         
         'title'=>'required|string',
+        'titre'=>'required|string',
         'description'=>'required|string',
+        'descriptionEng	'=>'required|string',
     ]);
 
 $categorie=Categorie::firstOrCreate(
@@ -56,7 +58,9 @@ public function update(Request $request, $id)
         // Validate incoming data
         $validated = $request->validate([
             'title' => 'required|string',
+            'titre' => 'required|string',
             'description' => 'required|string',
+            'descriptionEng	' => 'required|string',
         ]);
         
         // Find the category

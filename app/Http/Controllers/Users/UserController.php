@@ -10,14 +10,26 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+
 class UserController extends Controller
 {   //Affichez la liste des utilisateurs 
 
+    
     public function index()
     {
         $users = User::all();
         return response()->json([
             'users' => $users
+        ]);
+
+        // return view('users.index', compact('users'));
+    }
+     public function profile()
+    {
+        $user=auth()->user();
+        
+        return response()->json([
+            'user' => $user
         ]);
 
         // return view('users.index', compact('users'));
@@ -72,7 +84,19 @@ class UserController extends Controller
         
       
     }
-    
+    public function updateProfile(Request $request){
+        $userAuth=auth()->user();
+       $id=$userAuth->id;
+       $validated=$request->validate([
+        'name' => 'required|string|max:255',
+        'email' => ['required','string','email','max:255',Rule::unique('users')->ignore($request->id)],
+        'password'=>'required|string|max:255',
+
+       ]);
+       $user=User::find($id);
+       $user->update($validated);
+
+    }
     //Modifier les informations d'un utilisateur par son id
 
     public function update(Request $request, $id)
