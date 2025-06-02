@@ -14,8 +14,8 @@ class Cours extends Model
 
 
     protected $table = 'cours';
-   
-    protected $fillable = [
+
+   protected $fillable = [
         'title',
         'description',
         'date_de_creation',
@@ -26,6 +26,9 @@ class Cours extends Model
         'deleted_at',
         'categorie_id',
         'formateur_id',
+        'photo_path',
+        'pblished',
+        'langue',
     ];
     public function module()
     {

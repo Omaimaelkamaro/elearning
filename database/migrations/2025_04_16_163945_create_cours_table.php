@@ -16,13 +16,18 @@ return new class extends Migration
         Schema::create('cours', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('langue')->default('francais');
             $table->text('description')->nullable();
-            $table->boolean('gratuit');
+            $table->boolean('gratuit')->default(false);
             $table->date('date_de_creation');
-            $table->integer('duree');
-            $table->float('prix');
+            $table->integer('duree')->nullable();
+            $table->float('prix')->nullable();
             $table->enum('niveau_de_difficulte',['avance','moyen','basique'])->default('basique');
             $table->foreignId('categorie_id')->constrained()->onDelete('cascade');
+            $table->foreignId('formateur_id',)->constrained('formateur')->onDelete('cascade');
+            $table->string('photo_path')->nullable();
+            $table->boolean('pblished')->default(false);
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -38,4 +43,3 @@ return new class extends Migration
         Schema::dropIfExists('cours');
     }
 };
-//cours

@@ -43,6 +43,11 @@ Route::group([],function(){
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/register', [RegisterController::class, 'register']);
     Route::post('/logout', [LoginController::class, 'logout']);
+    //statistique about us
+    Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
+ Route::get('/categories', [CategorieController::class, 'index']);
+   Route::get('/cours', [CoursController::class, 'index']);
+
 });
 // Route::get('/login', [LoginController::class, 'showLoginform']);
 
@@ -94,13 +99,16 @@ Route::middleware('auth:sanctum')->group( function () {
 
 
     //les routes pour cours
-    Route::get('/cours', [CoursController::class, 'index']);
+
     Route::post('/cours', [CoursController::class ,'store']);
     Route::put('/cours/{cours}', [CoursController::class ,'update']);
     Route::delete('/cours/archiver/{cours}', [CoursController::class ,'archiver']);
     Route::get('/cours/trash', [CoursController::class, 'trash']);
     Route::delete('/cours/{cours}', [CoursController::class ,'destroy']);
     Route::post('/cours/restore/{cours}', [CoursController::class ,'restore']);
+    Route::put('/coursImage/{cours}', [CoursController::class ,'updateImage']);
+
+
 
     //les routes pour l'Inscription
     Route::post('/inscriptions/{cours_id}/{user_id}', [InscriptionController::class, 'store']);//Inscription
@@ -120,7 +128,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
 
     //les routes pour une catégorie
-    Route::get('/categories', [CategorieController::class, 'index']);
+
     Route::post('/categories', [CategorieController::class ,'store']);
     Route::put('/categories/{categories}', [CategorieController::class ,'update']);
     Route::delete('/categories/{categories}', [CategorieController::class ,'destroy']);
@@ -182,9 +190,6 @@ Route::middleware('auth:sanctum')->group( function () {
 
     //Route pour certificat
     Route::get('/certificat/{userId}/{coursId}', [CertificationController::class, 'getCertificatData']);
-
-    //statistique about us
-    Route::get('/statistiques', [StatistiqueController::class, 'getStatistiques']);
 
 
 

@@ -54,18 +54,20 @@ class ApprentissageController extends Controller
 
     public function coursPourEtudiant($userId)
     {
-        
+
         $authUser = auth()->user();
         $user = User::findOrFail($userId);
-        
+
         if ($authUser->role === 'administrateur') {
             $cours = $user->cours()
-                ->select('cours.id', 'cours.title')
+               ->select('cours.id', 'cours.title', 'cours.photo_path')
+
                 ->withPivot('progression','etat', 'date_debut', 'dateFin', 'derniere_activite')
                 ->get()
                 ->map(function ($coursItem) use ($user) {
                     return [
                         'titre' => $coursItem->title,
+                        'photo_path' => $coursItem->photo_path,
                         'nom_utilisateur' => $user->name,
                         'progression' => $coursItem->pivot->progression,
                         'etat' => $coursItem->pivot->etat,
@@ -74,22 +76,24 @@ class ApprentissageController extends Controller
                         'derniere_activite' => $coursItem->pivot->derniere_activite,
                     ];
                 });
-    
+
             return response()->json($cours);
         }
-    
+
         else if ($authUser->role === 'formateur') {
-            $formateurId = $authUser->formateur->id; 
+            $formateurId = $authUser->formateur->id;
             $coursFormateur = Cours::where('formateur_id', $formateurId)->pluck('id');
 
             $cours = $user->cours()
                 ->whereIn('cours.id', $coursFormateur)
-                ->select('cours.id', 'cours.title')
+               ->select('cours.id', 'cours.title', 'cours.photo_path')
+
                 ->withPivot('progression','etat', 'date_debut', 'dateFin', 'derniere_activite')
                 ->get()
                 ->map(function ($coursItem) use ($user) {
                     return [
                         'titre' => $coursItem->title,
+                        'photo_path' => $coursItem->photo_path,
                         'nom_utilisateur' => $user->name,
                         'progression' => $coursItem->pivot->progression,
                         'etat' => $coursItem->pivot->etat,
@@ -100,36 +104,35 @@ class ApprentissageController extends Controller
                 });
 
                 return response()->json($cours);
-        } 
-        
-        elseif(($authUser->id === $user->id)){
-
-            $coursEtudiant = Cours::where('user_id', $user->id)->pluck('id');
-
-
-        $cours = $user->cours()
-                ->select('cours.id', 'cours.title')
-                ->withPivot('progression','etat', 'date_debut', 'dateFin', 'derniere_activite')
-                ->get()
-                ->map(function ($coursItem) use ($user) {
-                    return [
-                        'titre' => $coursItem->title,
-                        'nom_utilisateur' => $user->name,
-                        'progression' => $coursItem->pivot->progression,
-                        'etat' => $coursItem->pivot->etat,
-                        'date_debut' => $coursItem->pivot->date_debut,
-                        'dateFin' => $coursItem->pivot->dateFin,
-                        'derniere_activite' => $coursItem->pivot->derniere_activite,
-                    ];
-                });
-    
-            return response()->json($cours);
         }
-    
+
+       elseif ($authUser->id === $user->id) {
+    $cours = $user->cours()
+        ->select('cours.id', 'cours.title', 'cours.photo_path')
+
+        ->withPivot('progression','etat', 'date_debut', 'dateFin', 'derniere_activite')
+        ->get()
+        ->map(function ($coursItem) use ($user) {
+            return [
+                'titre' => $coursItem->title,
+                'photo_path' => $coursItem->photo_path,
+                'nom_utilisateur' => $user->name,
+                'progression' => $coursItem->pivot->progression,
+                'etat' => $coursItem->pivot->etat,
+                'date_debut' => $coursItem->pivot->date_debut,
+                'dateFin' => $coursItem->pivot->dateFin,
+                'derniere_activite' => $coursItem->pivot->derniere_activite,
+            ];
+        });
+
+    return response()->json($cours);
+}
+
+
 
         return response()->json(['message' => 'Accès non autorisé'], 403);
 
         }
     }
-    
-        
+
+
